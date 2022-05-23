@@ -82,7 +82,7 @@ def api_getstrategy():
         cursor = db_connection.cursor()
         # 區間策略
         if highest_price_for_region != "": 
-            cursor.execute("SELECT `最高價`,`最低價`,`日期`,`開盤價`,`收盤價`,`漲跌價差` FROM `2303聯電` WHERE `日期` BETWEEN '"+start_date+"' AND '"+end_date+"' ORDER BY `日期`;")
+            cursor.execute("SELECT `最高價`,`最低價`,`日期`,`開盤價`,`收盤價`,`漲跌價差` FROM `all_stocks_and_dates` WHERE `證券代號` = '"+stock_number+"' AND `日期` BETWEEN '"+start_date+"' AND '"+end_date+"' ORDER BY `日期`;")
             result = cursor.fetchall()
 
             #================================================================
