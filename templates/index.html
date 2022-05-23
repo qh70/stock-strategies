@@ -39,13 +39,14 @@
         </div>
         <div style="margin-top: 20px;display: none;" id="input_for_ma">
             <span>均線</span>
-            <input id="ma">
+            <input id="how_many_ma">
         </div>
     </div>
 
     <script type="text/javascript">
         let strategies = document.getElementById("strategies")
-        console.log(strategies)
+        let how_many_ma = document.getElementById("how_many_ma");
+        let highest_price_for_region = document.getElementById("highest_price_for_region");
         // 策略轉換顯示
         strategies.addEventListener("change", function(){
             let input_price_for_region = document.getElementById("input_price_for_region")
@@ -57,12 +58,14 @@
                 input_for_ma.style.display = "none";
                 region_rules.style.display = "block";
                 ma_rules.style.display = "none";
+                how_many_ma.value = "" /* 清空均線策略均線的value */
             }
             else{
                 input_price_for_region.style.display = "none";
                 input_for_ma.style.display = "block";
                 region_rules.style.display = "none";
                 ma_rules.style.display = "block";
+                highest_price_for_region.value = "" /* 清空區間策略最高價的value */
             }
         })
     </script>
@@ -75,16 +78,11 @@
             let end_date = document.getElementById("end_date");
             let highest_price_for_region = document.getElementById("highest_price_for_region");
             let lowest_price_for_region = document.getElementById("lowest_price_for_region");
-            let ma = document.getElementById("ma");
-            // console.log(start_date.value)
-            // console.log(end_date.value)
-            // console.log(highest_price_for_region.value)
-            // console.log(lowest_price_for_region.value)
+            let how_many_ma = document.getElementById("how_many_ma");
             // if(item2.style.display=="block"){
             //     show_login_area();
             // }else{
             //     let date=document.getElementById("date");
-            //     console.log(date.value)
             //     if(date.value==""){
             //         plz_date_time.style.display="block";
             //         plz_date_time.innerHTML="請選擇日期";
@@ -104,8 +102,6 @@
             req.onload=function(){
                 show_buy.innerHTML = "";
                 show_sale.innerHTML = "";
-                // console.log(this.responseText)
-                // console.log(JSON.parse(this.responseText)["trade_dates_and_price"])
                 trade_dates_and_price = JSON.parse(this.responseText)["trade_dates_and_price"]
                 draw_pic_data = JSON.parse(this.responseText)["draw_pic_data"]
                 
@@ -121,14 +117,12 @@
                         show_sale.appendChild(append_text_sale)
                     }
                 }
-                console.log(JSON.parse(this.responseText)["reward"])
                 reward.innerHTML = "報酬率"+JSON.parse(this.responseText)["reward"]+"%"
                 // 刪掉之前的畫布
                 if(document.getElementsByTagName("canvas").length > 0){
                     document.getElementsByTagName("canvas")[0].remove()
                 }
                 drawpic();
-    //             console.log(JSON.parse(this.responseText));
     //             if(JSON.parse(this.responseText)["ok"]==true){
     //                 window.location="/booking"
     //             }else{
@@ -157,7 +151,7 @@
                     "end_date": end_date.value,
                     "highest_price_for_region": highest_price_for_region.value,
                     "lowest_price_for_region": lowest_price_for_region.value,
-                    "ma" : ma.value
+                    "how_many_ma" : how_many_ma.value
                 })
             );
                 // }
@@ -192,15 +186,12 @@
                 //     let every_data = {};
 
             // }
-                console.log(res["result"])
-                console.log(typeof(res["result"]))
                 
             }
             // console.log(res["result"]) 非同步拿不出來
             */
             
             function drawpic(){
-                console.log(draw_pic_data)
                 var jsonArray = draw_pic_data
 
                 var FT = jsonArray;
@@ -208,7 +199,6 @@
                 var MA5 = new Array();
                 var MA10 = new Array();
                 var MA20 = new Array();
-                console.log(typeof(FT[0]))
                 for (var i = 0; i < FT.length; i++) {
                     var A1 = new Array();
                     A1[0] = setTime(FT[i].date);
@@ -340,11 +330,11 @@
                     var oneVal = (maxValue - minValue) / totalYNomber;
                     ctx.textAlign = "right";
                     for (var i = 1; i <= totalYNomber; i++) {
-                        var markerVal = parseInt(i * oneVal + minValue);;
+                        var markerVal = parseInt(i * oneVal + minValue); 
                         var xMarker = originX - 10;
                         var yMarker = parseInt(originY - cHeight * (markerVal - minValue) / (maxValue - minValue));
                         ctx.fillStyle = "white";
-                        ctx.font = "22px Verdana";
+                        ctx.font = "22px Verdana"; // y座標的刻度
                         ctx.fillText(markerVal, xMarker - 15, yMarker, cSpace); // 文字
                         if (i > 0) {
                             drawLine(originX + 1, yMarker - 3, originX - 9, yMarker - 3);
@@ -578,7 +568,6 @@
                     //如果移動到拖動選擇範圍按鈕
                     canvas.style.cursor = "default";
                     if (ifDrag && ctx.isPointInPath(mousePosition.x * 2, mousePosition.y * 2)) { //如果是鼠標移動的到調節範圍按鈕上，改變鼠標樣式
-                        //console.log(123);
                         canvas.style.cursor = "all-scroll";
                     }
                     ctx.fillStyle = color;
@@ -637,15 +626,14 @@
                         maxValue = 0;
                         minValue = 9999999;
                         for (var i = 0; i < dataArr.length; i++) {
-                            var barVal = dataArr[i][1][3];
+                            var barVal = parseFloat(dataArr[i][1][3]);
                             if (barVal > maxValue) {
                                 maxValue = barVal;
                             }
-                            var barVal2 = dataArr[i][1][2];
+                            var barVal2 = parseFloat(dataArr[i][1][2]);
                             if (barVal2 < minValue) {
                                 minValue = barVal2;
                             }
-
                         }
                         maxValue += 2; //上面預留20的空間
                         minValue -= 2; //下面預留20的空間
@@ -657,9 +645,7 @@
 
                         dragBarWidth = 10;
                         dragBarX = cWidth + cSpace + cMargin - dragBarWidth;
-
                     }
-
                 }
 
                 //檢測鼠標移動
@@ -844,7 +830,6 @@
             }
 
             // let strategies = document.getElementById("strategies")
-            // console.log(strategies)
             // let input_price_for_region = document.querySelector(".price_for_region")
             // let input_for_ma = document.querySelector(".input_for_ma")
             // if (strategies[strategies.selectedIndex].text == "區間"){
