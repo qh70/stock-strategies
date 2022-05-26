@@ -75,14 +75,13 @@ def api_getstrategy():
     highest_price_for_region = request.json["highest_price_for_region"] # 區間高價
     lowest_price_for_region = request.json["lowest_price_for_region"] # 區間低價
     how_many_ma = request.json["how_many_ma"] # 均線
-    print(type(how_many_ma))
     
     try:
         db_connection = pool.get_connection()
         cursor = db_connection.cursor()
         # 區間策略
         if highest_price_for_region != "": 
-            cursor.execute("SELECT `最高價`,`最低價`,`日期`,`開盤價`,`收盤價`,`漲跌價差` FROM `all_stocks_and_dates` WHERE `證券代號` = '"+stock_number+"' AND `日期` BETWEEN '"+start_date+"' AND '"+end_date+"' ORDER BY `日期`;")
+            cursor.execute("SELECT `最高價`,`最低價`,`日期`,`開盤價`,`收盤價`,`漲跌價差`,`證券名稱` FROM `all_stocks_and_dates` WHERE `證券代號` = '"+stock_number+"' AND `日期` BETWEEN '"+start_date+"' AND '"+end_date+"' ORDER BY `日期`;")
             result = cursor.fetchall()
 
             #================================================================
@@ -110,36 +109,21 @@ def api_getstrategy():
                 stock_daily_0_to_full.append(stock_daily.copy())
             #================================================================
 
-            # print(result)
-            # print((result[0][0]))
-            # print(type(result[0][0]))
-            # print(type(result[0]))
             highest_price_touched = []
             lowest_price_touched = []
             trade_dates = []
             # 如果第一天開盤價低於等於區間低價，開盤買進 ※ result[0][3] 首日開盤價
-            if float(result[0][3]) <= float(lowest_price_for_region):
-                print(1)
+            if float(result[0][3].replace(",", "")) <= float(lowest_price_for_region):
                 trade_dates.append(["買進", start_date, result[0][3]])
                 # own = 1
                 # cost = float(first_day_open_price)
                 for i in range(len(result)):
-                    if float(result[i][0]) >= float(highest_price_for_region):
-                        # print(float(result[i]))
+                    if float(result[i][0].replace(",", "")) >= float(highest_price_for_region):
                         highest_price_touched.append([result[i][2],result[i][3]]) # 最高價高於區間高價的list
-                    if float(result[i][1]) <= float(lowest_price_for_region): 
+                    if float(result[i][1].replace(",", "")) <= float(lowest_price_for_region): 
                         lowest_price_touched.append([result[i][2],result[i][3]]) # 最低價低於區間低價的list
-                # print(highest_price_touched)
-                # print(lowest_price_touched)
-                # print(trade_dates)
                 find_status = "up" # 往區間高價找
-                # print(lowest_price_touched[0])
-                # print(type(lowest_price_touched[0]))
-                # print(trade_dates[0])
-                # print(type(trade_dates[0]))
-                # print("len(result)", len(result))
                 for j in range(len(result)):
-                    # print("j", j)
                     if find_status == "down":
                         for k in range(len(lowest_price_touched)):
                             if lowest_price_touched[k][0] > trade_dates[-1][1]:
@@ -149,7 +133,6 @@ def api_getstrategy():
                                     # del lowest_price_touched[:lowest_price_touched.index(lowest_price_touched[k])]
                                     del lowest_price_touched[:lowest_price_touched.index(lowest_price_touched[k])+1]
                                     find_status = "up"
-                                    # print(trade_dates)
                                     break
                                 else:
                                     trade_dates.append(["買進", lowest_price_touched[k][0], lowest_price_touched[k][1]])
@@ -163,7 +146,6 @@ def api_getstrategy():
                                     trade_dates.append(["賣出", highest_price_touched[l][0], highest_price_for_region])
                                     del highest_price_touched[:highest_price_touched.index(highest_price_touched[l])+1]
                                     find_status = "down"
-                                    # print(trade_dates)
                                     break
                                 else:
                                     trade_dates.append(["賣出", highest_price_touched[l][0], highest_price_touched[l][1]])
@@ -175,20 +157,15 @@ def api_getstrategy():
             # 如果第一天開盤價高於區間低價，開始搜尋買進日期
             else:
                 for i in range(len(result)):
-                    if float(result[i][0]) >= float(highest_price_for_region):
-                        # print(float(result[i]))
+                    if float(result[i][0].replace(",", "")) >= float(highest_price_for_region):
                         highest_price_touched.append([result[i][2],result[i][3]]) # 最高價高於區間高價的list
-                    if float(result[i][1]) <= float(lowest_price_for_region): 
+                    if float(result[i][1].replace(",", "")) <= float(lowest_price_for_region): 
                         lowest_price_touched.append([result[i][2],result[i][3]]) # 最低價低於區間低價的list
-                # print('100', highest_price_touched)
-                # print("lowest_price_touched", lowest_price_touched)
                 if len(lowest_price_touched) >= 1:
                     trade_dates.append(["買進", lowest_price_touched[0][0], lowest_price_for_region])
                     find_status = "up" # 往區間高價找
                     for j in range(len(result)):
-                        # print("j", j)
                         if find_status == "down":
-                            # print(trade_dates)
                             for k in range(len(lowest_price_touched)):
                                 if lowest_price_touched[k][0] > trade_dates[-1][1]:
                                     if float(lowest_price_touched[k][1]) >= float(lowest_price_for_region): # 如果開盤價大於區間低價
@@ -196,7 +173,6 @@ def api_getstrategy():
                                         # del lowest_price_touched[:lowest_price_touched.index(lowest_price_touched[k])]
                                         del lowest_price_touched[:lowest_price_touched.index(lowest_price_touched[k])+1]
                                         find_status = "up"
-                                        # print(trade_dates)
                                         break
                                     else: # 如果開盤價小於區間低價
                                         trade_dates.append(["買進", lowest_price_touched[k][0], lowest_price_touched[k][1]]) # 開盤價買進
@@ -210,15 +186,11 @@ def api_getstrategy():
                                         trade_dates.append(["賣出", highest_price_touched[l][0], highest_price_for_region])
                                         del highest_price_touched[:highest_price_touched.index(highest_price_touched[l])+1]
                                         find_status = "down"
-                                        # print(trade_dates)
                                         break
                                     else:
                                         trade_dates.append(["賣出", highest_price_touched[l][0], highest_price_touched[l][1]])
-                                        # print("126", highest_price_touched)
                                         del highest_price_touched[:highest_price_touched.index(highest_price_touched[l])+1]
-                                        # print(highest_price_touched)
                                         find_status = "down"
-                                        # print(trade_dates)
                                         break
                 else:
                     trade_dates = [["沒有買入點", "", ""],["", "", ""]]
@@ -278,7 +250,6 @@ def api_getstrategy():
                                     trade_dates.append(["賣出", under_ma_dates[n][0], under_ma_dates[n][2]])
                                     del under_ma_dates[:under_ma_dates.index(under_ma_dates[n])+1]
                                     find_status = "up"
-                                    print(trade_dates)
                                     break
                         else:
                             for p in range(len(above_ma_dates)):
@@ -299,7 +270,6 @@ def api_getstrategy():
                 if len(trade_dates) > 0: # 如果有最低價小於等於均價且收盤價大於等於均價的日期
                     for m in range(len(result_add_ma)):
                         if find_status == "down":
-                            # print(2)
                             for n in range(len(under_ma_dates)):
                                 if under_ma_dates[n][0] > trade_dates[-1][1]:
                                     trade_dates.append(["賣出", under_ma_dates[n][0], under_ma_dates[n][2]])
@@ -319,7 +289,7 @@ def api_getstrategy():
                     trade_dates.append(["回測最後一天賣出", result_add_ma[-1][1], result_add_ma[-1][3]])
 
             #================================================================生成圖片需要的資料
-            cursor.execute("SELECT `最高價`,`最低價`,`日期`,`開盤價`,`收盤價`,`漲跌價差` FROM `all_stocks_and_dates` WHERE `證券代號` = '"+stock_number+"' AND `日期` BETWEEN '"+start_date+"' AND '"+end_date+"' ORDER BY `日期`;")
+            cursor.execute("SELECT `最高價`,`最低價`,`日期`,`開盤價`,`收盤價`,`漲跌價差`,`證券名稱` FROM `all_stocks_and_dates` WHERE `證券代號` = '"+stock_number+"' AND `日期` BETWEEN '"+start_date+"' AND '"+end_date+"' ORDER BY `日期`;")
             result = cursor.fetchall()
 
             stock_daily_0_to_full=[]
@@ -350,7 +320,7 @@ def api_getstrategy():
             for m in range(int(len(trade_dates)/2)):
                 reward = reward+(float(trade_dates[m*2-1][2])-float(trade_dates[m*2-2][2]))/float(trade_dates[0][2])*100
         print(trade_dates)
-        return jsonify({"trade_dates_and_price": trade_dates,"draw_pic_data": stock_daily_0_to_full, "reward": math.floor(reward*100) / 100.0})
+        return jsonify({"trade_dates_and_price": trade_dates,"draw_pic_data": stock_daily_0_to_full, "reward": math.floor(reward*100) / 100.0, "stock_name_and_number": stock_number+result[0][6]})
     except mysql.connector.Error as err:
         print(err, "error msg")
     finally:

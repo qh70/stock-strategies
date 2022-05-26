@@ -15,6 +15,7 @@
 </head>
 
 <body>
+    <div id="stock_name_and_number" style="color: white"></div>
     <!-- 圖片 -->
     <div id="chart" height="500" width="1200" style="margin:30px;"></div>
     <!-- 策略選擇 -->
@@ -102,8 +103,10 @@
             req.onload=function(){
                 show_buy.innerHTML = "";
                 show_sale.innerHTML = "";
-                trade_dates_and_price = JSON.parse(this.responseText)["trade_dates_and_price"]
-                draw_pic_data = JSON.parse(this.responseText)["draw_pic_data"]
+                trade_dates_and_price = JSON.parse(this.responseText)["trade_dates_and_price"];
+                console.log(JSON.parse(this.responseText)["trade_dates_and_price"]);
+                draw_pic_data = JSON.parse(this.responseText)["draw_pic_data"];
+                document.getElementById("stock_name_and_number").innerHTML = JSON.parse(this.responseText)["stock_name_and_number"]; // 顯示股號、股票名稱
                 
                 for(let i = 0;i<trade_dates_and_price.length;i++){
                     if(i%2 ==0){
@@ -223,8 +226,8 @@
                     var M20 = new Array();
                     M20[0] = parseFloat(FT[i].ma20).toFixed(2);
                     MA20.push(M20);
-                    
                 }
+                console.log(MA5)
                 //上面是直接使用返回的均線數據,但是30日均線沒有給,下面通過計算獲取30日均線數據
                 //計算30日均線
                 var MA30 = calculateMA(30, dataArr);
@@ -367,12 +370,6 @@
                     //ctx.fillText("日 期", originX + cWidth / 2, originY + cSpace - 20);
                 };
 
-
-
-
-
-
-
                 //繪製k形圖
                 function drawBarAnimate(mouseMove) {
                     point_MA5 = new Array();
@@ -400,19 +397,15 @@
                         var barH = parseInt(cHeight * (barVal - minValue) / (maxValue - minValue));
                         var y = originY - barH;
                         var x = originX + ((bWidth + bMargin) * i + bMargin) * parsent;
-
+                        
                         drawMA(MA5, i, x, "MA5");
                         drawMA(MA10, i, x, "MA10");
                         drawMA(MA20, i, x, "MA20");
                         // drawMA(MA30, i, x, "MA30");
-
-
-
-
                     }
 
 
-                    drawBezier(point_MA5, "orange", 5);
+                    drawBezier(point_MA5, "orange", -1);
                     drawBezier(point_MA10, "rgb(0,95,178)", 10);
                     drawBezier(point_MA20, "green", 20);
                     drawBezier(point_MA30, "yellow", 30);
@@ -463,7 +456,7 @@
                 }
 
 
-                function drawBezier(point, color, num) {
+                function drawBezier(point, color, num) { //num 控制均線從哪開始畫
                     ctx.strokeStyle = color;
                     ctx.lineWidth = 1;
                     ctx.beginPath();
@@ -536,9 +529,6 @@
                         MA30_oy1 = MAy;
                         point_MA30.push({ x: MA30_ox1, y: MA30_oy1 });
                     }
-
-
-
                 }
 
                 //繪製方塊
@@ -699,8 +689,8 @@
                             ctx.beginPath();
                             ctx.moveTo(vx, vy);
                             ctx.lineTo(vx+200, vy);
-                            ctx.lineTo(vx+200, vy+330);
-                            ctx.lineTo(vx, vy+330);
+                            ctx.lineTo(vx+200, vy+250);
+                            ctx.lineTo(vx, vy+250);
                             ctx.lineTo(vx, vy); //繪製最後一筆使圖像閉合
                             ctx.lineWidth = 2;
                             ctx.fillStyle="rgba(104,113,130,0.5)"; 
@@ -714,10 +704,10 @@
                             ctx.fillText("最高價："+dataArr[positionx-1][1][3], vx+20, vy+140, 150); // 文字
                             ctx.fillText("最低價："+dataArr[positionx-1][1][2], vx+20, vy+175, 150); // 文字
                             ctx.fillText("收盤價："+dataArr[positionx-1][1][1], vx+20, vy+105, 150); // 文字
-                            ctx.fillText("MA5："+MA5[positionx-1], vx+20, vy+210, 150); // 文字
-                            ctx.fillText("MA10："+MA10[positionx-1], vx+20, vy+245, 150); // 文字
-                            ctx.fillText("MA20："+MA20[positionx-1], vx+20, vy+280, 150); // 文字
-                            ctx.fillText("MA30："+MA30[positionx-1], vx+20, vy+315, 150); // 文字
+                            ctx.fillText(""+how_many_ma.value+"日均線："+MA5[positionx-1], vx+20, vy+210, 150); // 文字
+                            // ctx.fillText("MA10："+MA10[positionx-1], vx+20, vy+245, 150); // 文字
+                            // ctx.fillText("MA20："+MA20[positionx-1], vx+20, vy+280, 150); // 文字
+                            // ctx.fillText("MA30："+MA30[positionx-1], vx+20, vy+315, 150); // 文字
 
 
 
