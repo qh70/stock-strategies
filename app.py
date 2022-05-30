@@ -40,7 +40,7 @@ def api_getstrategy():
     end_date = request.json["end_date"].replace("-","")
 
     # 區間策略
-    if highest_price_for_region != "": 
+    if request.json["highest_price_for_region"] != "": 
         highest_price_for_region = float(request.json["highest_price_for_region"]) # 區間高價
         lowest_price_for_region = float(request.json["lowest_price_for_region"]) # 區間低價
         if stock_number == "2330": # 從redis拿資料
@@ -171,7 +171,7 @@ def api_getstrategy():
                 trade_dates.append(["回測最後一天賣出", result[-1][2], result[-1][4]/100])
             
     # 均線策略
-    elif how_many_ma != "":
+    elif request.json["how_many_ma"] != "":
         how_many_ma = int(request.json["how_many_ma"]) # 均線
 
         start_date = datetime.strptime(start_date,"%Y%m%d") # 轉成datetime.datetime格式
