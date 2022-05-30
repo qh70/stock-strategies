@@ -83,12 +83,12 @@ def api_getstrategy():
         # 區間策略
         if highest_price_for_region != "": 
             # 如果股號在elasticache裡面
-            if stock_number == "2330":
+            if stock_number == "23300":
                 r = redis.Redis(host="myrediscluster.6sqss0.ng.0001.use1.cache.amazonaws.com", port=6379)
                 get_2330 = eval(r.get("2330"))
                 result = ()
                 for i in range(len(get_2330)):
-                    result = result+([get_2330[i][2], get_2330[i][3], get_2330[i][0], get_2330[i][1], get_2330[i][4], get_2330[i][5], "台積電"],)
+                    result = result+([str(get_2330[i][2]), str(get_2330[i][3]), str(get_2330[i][0]), str(get_2330[i][1]), str(get_2330[i][4]), str(get_2330[i][5]), "台積電"],)
                 print(2330,"yes")
             # 如果股號不在elasticache裡面
             else:
