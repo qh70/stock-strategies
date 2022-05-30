@@ -55,7 +55,7 @@ def api_getstrategy():
             try:
                 db_connection = pool.get_connection()
                 cursor = db_connection.cursor()
-                cursor.execute("SELECT `最高價`,`最低價`,`日期`,`開盤價`,`收盤價`,`漲跌價差` FROM `all_stocks_and_dates_F_test` WHERE `證券代號` = '"+stock_number+"' AND `日期` BETWEEN '"+start_date+"' AND '"+end_date+"' ORDER BY `日期`;")
+                cursor.execute("SELECT `日期`,`開盤價`,`最高價`,`最低價`,`收盤價`,`漲跌價差` FROM `all_stocks_and_dates_F_test` WHERE `證券代號` = '"+stock_number+"' AND `日期` BETWEEN '"+start_date+"' AND '"+end_date+"' ORDER BY `日期`;")
                 result = cursor.fetchall()
             except mysql.connector.Error as err:
                 print(err, "error msg")
@@ -65,16 +65,16 @@ def api_getstrategy():
         stock_daily_0_to_full=[]
         for i in range(len(result)):
             # 改date格式
-            date_list = list(result[i][2])
+            date_list = list(result[i][0])
             date_list.insert(4,"-")
             date_list.insert(7,"-")
             date = "".join(date_list)
             # 傳送資料
             stock_daily = {
-                "open": result[i][3]/100, 
-                "high": result[i][0]/100, 
+                "open": result[i][1]/100, 
+                "high": result[i][2]/100,
+                "low": result[i][3]/100,  
                 "close": result[i][4]/100, 
-                "low": result[i][1]/100, 
                 # "volume": result[i][3], 
                 "price_change": result[i][5]/100,
                 "date": date,
@@ -88,14 +88,14 @@ def api_getstrategy():
         highest_price_touched = []
         lowest_price_touched = []
         trade_dates = []
-        # 如果第一天開盤價低於等於區間低價，開盤買進 ※ result[0][3] 首日開盤價
-        if result[0][3] <= float(lowest_price_for_region)*100:
-            trade_dates.append(["買進", start_date, result[0][3]/100])
+        # 如果第一天開盤價低於等於區間低價，開盤買進 ※ result[0][1] 首日開盤價
+        if result[0][1] <= float(lowest_price_for_region)*100:
+            trade_dates.append(["買進", start_date, result[0][1]/100])
             for i in range(len(result)):
-                if result[i][0] >= float(highest_price_for_region)*100:
-                    highest_price_touched.append([result[i][2],result[i][3]/100]) # 當日最高價高於區間高價的list
-                if result[i][1] <= float(lowest_price_for_region)*100: 
-                    lowest_price_touched.append([result[i][2],result[i][3]/100]) # 當日最低價低於區間低價的list
+                if result[i][2] >= float(highest_price_for_region)*100:
+                    highest_price_touched.append([result[i][0],result[i][1]/100]) # 當日最高價高於區間高價的list
+                if result[i][2] <= float(lowest_price_for_region)*100: 
+                    lowest_price_touched.append([result[i][0],result[i][1]/100]) # 當日最低價低於區間低價的list
             find_status = "up" # 往區間高價找
             for j in range(len(result)):
                 if find_status == "down":
@@ -126,14 +126,14 @@ def api_getstrategy():
                                 find_status = "down"
                                 break
             if len(trade_dates)%2 == 1:
-                trade_dates.append(["回測最後一天賣出", result[-1][2], result[-1][4]/100])
+                trade_dates.append(["回測最後一天賣出", result[-1][0], result[-1][4]/100])
         # 如果第一天開盤價高於區間低價，開始搜尋買進日期
         else:
             for i in range(len(result)):
-                if result[i][0] >= float(highest_price_for_region)*100:
-                    highest_price_touched.append([result[i][2],result[i][3]/100]) # 最高價高於區間高價的list
-                if result[i][1] <= float(lowest_price_for_region)*100: 
-                    lowest_price_touched.append([result[i][2],result[i][3]/100]) # 最低價低於區間低價的list
+                if result[i][2] >= float(highest_price_for_region)*100:
+                    highest_price_touched.append([result[i][0],result[i][1]/100]) # 最高價高於區間高價的list
+                if result[i][2] <= float(lowest_price_for_region)*100: 
+                    lowest_price_touched.append([result[i][0],result[i][1]/100]) # 最低價低於區間低價的list
             if len(lowest_price_touched) >= 1:
                 trade_dates.append(["買進", lowest_price_touched[0][0], lowest_price_for_region])
                 find_status = "up" # 往區間高價找
@@ -168,7 +168,7 @@ def api_getstrategy():
             else:
                 trade_dates = [["沒有買入點", "", ""],["", "", ""]]
             if len(trade_dates)%2 == 1:
-                trade_dates.append(["回測最後一天賣出", result[-1][2], result[-1][4]/100])
+                trade_dates.append(["回測最後一天賣出", result[-1][0], result[-1][4]/100])
             
     # 均線策略
     elif request.json["how_many_ma"] != "":
