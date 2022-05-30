@@ -43,7 +43,7 @@ def api_getstrategy():
     if request.json["highest_price_for_region"] != "": 
         highest_price_for_region = float(request.json["highest_price_for_region"]) # 區間高價
         lowest_price_for_region = float(request.json["lowest_price_for_region"]) # 區間低價
-        if stock_number == "2330": # 從redis拿資料
+        if stock_number == "23300": # 從redis拿資料
             r = redis.Redis(host="myrediscluster.6sqss0.ng.0001.use1.cache.amazonaws.com", port=6379)
             get_2330 = eval(r.get("2330"))
             print(get_2330)
