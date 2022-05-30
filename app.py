@@ -78,6 +78,8 @@ def api_getstrategy():
     how_many_ma = request.json["how_many_ma"] # 均線
     
     try:
+        db_connection = pool.get_connection()
+        cursor = db_connection.cursor()
         # 區間策略
         if highest_price_for_region != "": 
             # 如果股號在elasticache裡面
@@ -87,10 +89,9 @@ def api_getstrategy():
                 result = ()
                 for i in range(len(get_2330)):
                     result = result+([get_2330[i][2], get_2330[i][3], get_2330[i][0], get_2330[i][1], get_2330[i][4], get_2330[i][5], "台積電"],)
+                print(2330,"yes")
             # 如果股號不在elasticache裡面
             else:
-                db_connection = pool.get_connection()
-                cursor = db_connection.cursor()
                 cursor.execute("SELECT `最高價`,`最低價`,`日期`,`開盤價`,`收盤價`,`漲跌價差`,`證券名稱` FROM `all_stocks_and_dates` WHERE `證券代號` = '"+stock_number+"' AND `日期` BETWEEN '"+start_date+"' AND '"+end_date+"' ORDER BY `日期`;")
                 result = cursor.fetchall()
 
