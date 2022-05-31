@@ -19,7 +19,7 @@ pool=pooling.MySQLConnectionPool(
 try:
     db_connection = pool.get_connection()
     cursor = db_connection.cursor()
-    cursor.execute("SELECT `日期`,`開盤價`,`最高價`,`最低價`,`收盤價`,`漲跌價差` FROM `all_stocks_and_dates_F_test` WHERE `證券代號` = '2330' AND `日期` BETWEEN '20200101' AND '20220517' ORDER BY `日期`;")
+    cursor.execute("SELECT `日期`,`開盤價`,`最高價`,`最低價`,`收盤價`,`漲跌價差` FROM `all_stocks_and_dates_F_test` ORDER BY `日期`;")
     result = str(cursor.fetchall())
 
 except mysql.connector.Error as err:
