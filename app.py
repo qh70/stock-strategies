@@ -191,7 +191,7 @@ def api_getstrategy():
         if stock_number == "23300": # 從redis拿資料
             r = redis.Redis(host="myrediscluster.6sqss0.ng.0001.use1.cache.amazonaws.com", port=6379)
             get_2330 = eval(r.get("2330"))
-            result_for_m = []
+            result_for_ma = []
             for i in range(len(get_2330)):
                 if get_2330[i][0] >= buffer_date and get_2330[i][0] <= end_date:
                     result_for_ma.append(get_2330[i])
