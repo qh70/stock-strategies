@@ -307,5 +307,66 @@ def api_getstrategy():
         for m in range(int(len(trade_dates)/2)):
             reward = reward+(trade_dates[m*2-1][2]-trade_dates[m*2-2][2])/trade_dates[m*2-2][2]*100
     return jsonify({"trade_dates_and_price": trade_dates,"draw_pic_data": stock_daily_0_to_full, "reward": math.floor(reward*100) / 100.0, "stock_name_and_number": stock_number})
-    
+
+# socket================================================================
+from flask import Flask, render_template
+from flask_socketio import SocketIO, send, emit
+from numpy import broadcast
+
+socketio = SocketIO(app)
+
+# step 1: server sends data
+# client端會從下面這個any event 接收到後端的message "send data"
+@socketio.on("connect")
+def test_connect():
+    emit("any event", "send data")
+      #   觸發事件       傳送參數
+
+# step 2: server receives data
+@socketio.on('message')
+def handle_message(data):
+    print('received message: ' + data)
+# 會print出 received message: I'm connected 
+    send(data, broadcast=True)
+    print(1)
+
+# namespace================================================
+@socketio.on('my_event', namespace='/test')
+def handle_namespace_event(data):
+    print("received:"+str(data))
+    emit("my_response", data, broadcast=True)
+
+# 在此請不要使用socketio.emit() function, 這是一個跟此handle_namespace_event函數上下文無關的函數，對此環境一無所知。在此環境下要使用
+# emit()函數，且emit()僅能在事件處理程序內部使用，他會從事件內（handle_namespace_event）獲取訊息。他會檢測當前正在處理的事件中使用的namespace，並默認在同一命名空間中發出訊息
+
+#print 出結果：
+# "recieved: data from client"
+# =========================================================
+
+
+# room================================================
+from flask_socketio import join_room, leave_room
+room = 0
+@socketio.on('join')
+def on_join(data):
+    room = data["room"]
+    print(data)
+		#此為join_room裡的function，
+		#代表進入room裡
+    join_room(room)
+    emit("room-message", "abc", 
+		to=room)
+
+@socketio.on('room-message')
+def room_message(data):
+    emit("room-message", data, 
+		to=room)
+
+#print 出結果：
+# {'user': 'abc', 'room': 'myroom', 'message': 'ok'}
+
+#如果沒有join_room client端將接收不到來自room emit出來的訊息
+# ====================================================    
+
+
 app.run(host="0.0.0.0",port=3000)

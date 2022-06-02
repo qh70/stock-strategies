@@ -850,6 +850,52 @@
         <br>當日沒有成交量或當日暫停交易收盤價皆與昨日同。
         <br>均線使用無條件捨去小數第三位。
     </div>
+    <!-- 聊天室======================================================================================================= -->
+    <!-- 以下src適用於flask server(socket  io library) --> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+                integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+                crossorigin="anonymous">
+    </script>
+    <script type="text/javascript">
+        // // Step 1: Establishing connection with the server hosted
+        var socket = io();
+
+
+
+        // //step 2: client receives message:
+        // //socket handler to deal with message, listening for event named `any event`，意思是js client端會從"any event"這個socket通道（對應到後端的事件名稱），用function接收到後端的訊息
+        // socket.on('any event', function(msg) {
+        //         console.log(msg);
+        //                 // msg= send data
+        // });
+
+        // //step 3: send message to server
+        // //socket 傳送訊息到"message"這個通道，並讓後端接收到message
+        socket.emit("message", "I'm connected!");
+
+        
+        socket.on("message", function(msg){
+            let messages = document.getElementById("messages");
+            let msgli = document.createElement("li");
+            console.log(msg)
+            msgli.innerHTML = msg
+            messages.appendChild(msgli);
+            console.log("Received message");
+        })
+
+        // // 傳送msg
+        function sendbutton(){
+            let myMessage = document.getElementById("myMessage");
+            socket.emit("message", myMessage.value);
+            myMessage.value = "";
+        }
+
+    </script>
+    <div style="background-color: white;height: 1000px;">
+        <ul id="messages"></ul>
+        <input type="text" id="myMessage">
+        <button id="sendbutton" onclick="sendbutton()">Send</button>
+    </div>
     
     
 </body>
