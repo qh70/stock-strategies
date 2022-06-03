@@ -307,7 +307,7 @@ def api_getstrategy():
         for m in range(int(len(trade_dates)/2)):
             reward = reward+(trade_dates[m*2-1][2]-trade_dates[m*2-2][2])/trade_dates[m*2-2][2]*100
     return jsonify({"trade_dates_and_price": trade_dates,"draw_pic_data": stock_daily_0_to_full, "reward": math.floor(reward*100) / 100.0, "stock_name_and_number": stock_number})
-'''
+
 # socket================================================================
 from flask import Flask, render_template
 from flask_socketio import SocketIO, send, emit
@@ -367,6 +367,6 @@ def room_message(data):
 
 #如果沒有join_room client端將接收不到來自room emit出來的訊息
 # ====================================================    
-'''
+
 
 app.run(host="0.0.0.0",port=3000)
