@@ -368,5 +368,8 @@ def room_message(data):
 #如果沒有join_room client端將接收不到來自room emit出來的訊息
 # ====================================================    
 
-
+'''
 app.run(host="0.0.0.0",port=3000)
+'''
+if __name__ == '__main__':
+    socketio.run(app, host="0.0.0.0", port=3000)
