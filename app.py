@@ -199,7 +199,7 @@ def api_getstrategy():
             try: 
                 db_connection = pool.get_connection()
                 cursor = db_connection.cursor()
-                cursor.execute("SELECT `日期`,`開盤價`,`最高價`,`最低價`,`收盤價`,`漲跌價差` FROM `all_stocks_and_dates_F_test` WHERE `證券代號` = '"+stock_number+"' AND `日期` BETWEEN  '"+buffer_date+"' AND '"+end_date+"' ORDER BY `日期`;")
+                cursor.execute("SELECT `日期`,`開盤價`,`最高價`,`最低價`,`收盤價`,`漲跌價差` FROM `all_stocks_and_dates_F_test` WHERE `證券代號` = '"+stock_number+"' AND `日期` BETWEEN  '"+buffer_date+"' AND '"+end_date+"' ORDER BY `日期` DESC;")
                 result_for_ma = cursor.fetchall()
             except mysql.connector.Error as err:
                 print(err, "error msg")
@@ -220,6 +220,7 @@ def api_getstrategy():
                 result_add_ma.append([result_for_ma[i][3]/100, result_for_ma[i][0], result_for_ma[i][1]/100, result_for_ma[i][4]/100, (math.floor(total/how_many_ma))/100.0, result_for_ma[i][2]/100, result_for_ma[i][5]/100])
             else:
                 continue
+        result_add_ma.reverse()
         for k in range(len(result_add_ma)): # 分類站上與跌破均線的日期集合
             if result_add_ma[k][3] > result_add_ma[k][4]:
                 above_ma_dates.append([result_add_ma[k][1], result_add_ma[k][4], result_add_ma[k][3]])
