@@ -199,7 +199,7 @@ def api_getstrategy():
             try: 
                 db_connection = pool.get_connection()
                 cursor = db_connection.cursor()
-                cursor.execute("SELECT `日期`,`開盤價`,`最高價`,`最低價`,`收盤價`,`漲跌價差` FROM `all_stocks_and_dates_F_test` WHERE `證券代號` = '"+stock_number+"' AND `日期` BETWEEN  '"+buffer_date+"' AND '"+end_date+"' ORDER BY `日期` DESC;")
+                cursor.execute("SELECT `日期`,`開盤價`,`最高價`,`最低價`,`收盤價`,`漲跌價差` FROM `all_stocks_and_dates_F_test` WHERE `證券代號` = '"+stock_number+"' AND `日期` BETWEEN  '"+buffer_date+"' AND '"+end_date+"' ORDER BY `日期`;")
                 result_for_ma = cursor.fetchall()
             except mysql.connector.Error as err:
                 print(err, "error msg")
