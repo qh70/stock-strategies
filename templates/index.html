@@ -857,44 +857,82 @@
                 crossorigin="anonymous">
     </script>
     <script type="text/javascript">
-        // // Step 1: Establishing connection with the server hosted
-        var socket = io();
+        var socket;
+        var chat_which;
+        function chat1(){
+            chat_which = 1;
+            // // Step 1: Establishing connection with the server hosted
+            socket = io();
 
 
 
-        // //step 2: client receives message:
-        // //socket handler to deal with message, listening for event named `any event`，意思是js client端會從"any event"這個socket通道（對應到後端的事件名稱），用function接收到後端的訊息
-        // socket.on('any event', function(msg) {
-        //         console.log(msg);
-        //                 // msg= send data
-        // });
+            // //step 2: client receives message:
+            // //socket handler to deal with message, listening for event named `any event`，意思是js client端會從"any event"這個socket通道（對應到後端的事件名稱），用function接收到後端的訊息
+            // socket.on('any event', function(msg) {
+            //         console.log(msg);
+            //                 // msg= send data
+            // });
 
-        // //step 3: send message to server
-        // //socket 傳送訊息到"message"這個通道，並讓後端接收到message
-        socket.emit("message", "I'm connected!");
+            // //step 3: send message to server
+            // //socket 傳送訊息到"message"這個通道，並讓後端接收到message
+            socket.emit("message", "I'm connected!");
 
-        
-        socket.on("message", function(msg){
-            let messages = document.getElementById("messages");
-            let msgli = document.createElement("li");
-            console.log(msg)
-            msgli.innerHTML = msg
-            messages.appendChild(msgli);
-            console.log("Received message");
-        })
+            socket.on("message", function(msg){
+                let messages = document.getElementById("messages");
+                let msgli = document.createElement("li");
+                console.log(msg)
+                msgli.innerHTML = msg
+                messages.appendChild(msgli);
+                console.log("Received message");
+            })
+        }
+
+        function chat2(){
+            chat_which = 2;
+            // // Step 1: Establishing connection with the server hosted
+            socket = io();
+
+
+
+            // //step 2: client receives message:
+            // //socket handler to deal with message, listening for event named `any event`，意思是js client端會從"any event"這個socket通道（對應到後端的事件名稱），用function接收到後端的訊息
+            // socket.on('any event', function(msg) {
+            //         console.log(msg);
+            //                 // msg= send data
+            // });
+
+            // //step 3: send message to server
+            // //socket 傳送訊息到"message"這個通道，並讓後端接收到message
+            socket.emit("message2", "I'm connected2!");
+
+            socket.on("message2", function(msg){
+                let messages = document.getElementById("messages");
+                let msgli = document.createElement("li");
+                console.log(msg)
+                msgli.innerHTML = msg
+                messages.appendChild(msgli);
+                console.log("Received message");
+            })
+        }
 
         // // 傳送msg
         function sendbutton(){
             let myMessage = document.getElementById("myMessage");
-            socket.emit("message", myMessage.value);
+            if(chat_which ===1){
+                socket.emit("message", myMessage.value);
+            }else if(chat_which ===2){
+                socket.emit("message2", myMessage.value);
+            }            
             myMessage.value = "";
         }
-
     </script>
     <div style="background-color: white;height: 1000px;">
         <ul id="messages"></ul>
         <input type="text" id="myMessage">
         <button id="sendbutton" onclick="sendbutton()">Send</button>
+        <br>
+        <button onclick="chat1()">客服1</button>
+        <button onclick="chat2()">客服2</button>
     </div>
     
     

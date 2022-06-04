@@ -195,6 +195,7 @@ def api_getstrategy():
             for i in range(len(get_2330)):
                 if get_2330[i][0] >= buffer_date and get_2330[i][0] <= end_date:
                     result_for_ma.append(get_2330[i])
+            print(result_for_ma)
         else: # 從MySQL拿資料
             try: 
                 db_connection = pool.get_connection()
@@ -220,6 +221,7 @@ def api_getstrategy():
                 result_add_ma.append([result_for_ma[i][3]/100, result_for_ma[i][0], result_for_ma[i][1]/100, result_for_ma[i][4]/100, (math.floor(total/how_many_ma))/100.0, result_for_ma[i][2]/100, result_for_ma[i][5]/100])
             else:
                 break
+        print(result_add_ma)
         result_add_ma.reverse()
         for k in range(len(result_add_ma)): # 分類站上與跌破均線的日期集合
             if result_add_ma[k][3] > result_add_ma[k][4]:
@@ -330,6 +332,14 @@ def handle_message(data):
     send(data, broadcast=True)
     print(1)
 
+# step 2: server receives data
+@socketio.on('message2')
+def handle_message(data2):
+    print('received message: ' + data2)
+# 會print出 received message: I'm connected 
+    emit("message2", data2, broadcast=True)
+    print(2)
+
 # namespace================================================
 @socketio.on('my_event', namespace='/test')
 def handle_namespace_event(data):
@@ -368,8 +378,8 @@ def room_message(data):
 #如果沒有join_room client端將接收不到來自room emit出來的訊息
 # ====================================================    
 
-'''
+
 app.run(host="0.0.0.0",port=3000)
-'''
-if __name__ == '__main__':
-    socketio.run(app, host="0.0.0.0", port=3000)
+
+# if __name__ == '__main__':
+#     socketio.run(app, host="0.0.0.0", port=3000)
