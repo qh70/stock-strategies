@@ -273,8 +273,8 @@ def api_getstrategy():
                                 break
             else: # 如果沒有最低價小於等於均價且收盤價大於等於均價的日期
                 trade_dates = [["沒有買入點", "", ""],["", "", ""]]
-            if len(trade_dates)%2 == 1:
-                trade_dates.append(["回測最後一天賣出", result_add_ma[-1][1], result_add_ma[-1][3]])
+        if len(trade_dates)%2 == 1:
+            trade_dates.append(["回測最後一天賣出", result_add_ma[-1][1], result_add_ma[-1][3]])
 
         #================================================================生成圖片需要的資料
 
