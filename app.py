@@ -248,7 +248,6 @@ def api_getstrategy():
                                 break
             else: # 如果沒有收盤價在均線上方的日期
                 trade_dates = [["沒有買入點", "", ""],["", "", ""]]
-            print(trade_dates)
             if len(trade_dates)%2 == 1:
                 trade_dates.append(["回測最後一天賣出", result_add_ma[-1][1], result_add_ma[-1][3]])
                             
