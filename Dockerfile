@@ -9,4 +9,4 @@ RUN pip install mysql.connector
 RUN pip install flask_socketio
 RUN pip install numpy
 
-CMD ["python3", "app.py"]
+CMD ["python", "app.py"]
