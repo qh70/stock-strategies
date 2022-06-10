@@ -200,26 +200,34 @@ def api_getstrategy():
                 db_connection = pool.get_connection()
                 cursor = db_connection.cursor()
                 cursor.execute("SELECT `日期`,`開盤價`,`最高價`,`最低價`,`收盤價`,`漲跌價差` FROM `all_stocks_and_dates_F_test` WHERE `證券代號` = '"+stock_number+"' AND `日期` BETWEEN  '"+buffer_date+"' AND '"+end_date+"' ORDER BY `日期` DESC;")
-                result_for_ma = cursor.fetchall()
+                result_for_ma = cursor.fetchall() # 降冪
             except mysql.connector.Error as err:
                 print(err, "error msg")
             finally:
                 db_connection.close()
-
+        if result_for_ma == []:
+            return jsonify({"trade_dates_and_price": "回測均線超過資料開始時間"})
         trade_dates = [] # 所有交易日期
         above_ma_dates = [] # 列出所有收盤價在均線上方的日期
         under_ma_dates = [] # 列出所有收盤價在均線下方的日期
         result_add_ma = [] # 所有最低價、日期、開盤價、收盤價、均價集合
-
-        for i in range(len(result_for_ma)-how_many_ma+1): # 共有幾天
+        print("result_for_ma", result_for_ma)
+        for i in range(len(result_for_ma)): 
             if result_for_ma[i][0] >= start_date:
-                total = 0
-                for j in range(i,i+how_many_ma): # 每天的均線
-                    close = result_for_ma[j][4]
-                    total = total+close
+                if i+how_many_ma > len(result_for_ma): # 當求均線最早的那一天超出result_for_ma的資料，return"回測均線超過資料開始時間"
+                    return jsonify({"trade_dates_and_price": "回測均線超過資料開始時間"})
+                else:
+                    total = 0
+                    for j in range(i,i+how_many_ma): # 每天的均線
+                        close = result_for_ma[j][4]
+                        total = total+close
                 result_add_ma.append([result_for_ma[i][3]/100, result_for_ma[i][0], result_for_ma[i][1]/100, result_for_ma[i][4]/100, (math.floor(total/how_many_ma))/100.0, result_for_ma[i][2]/100, result_for_ma[i][5]/100])
-            else:
-                continue
+            else: # 日期開始小於要求起測日期
+                if i == 0:
+                    return jsonify({"trade_dates_and_price": "回測均線超過資料開始時間"})
+                else:
+                    break            
+        print("result_add_ma", result_add_ma)
         result_add_ma.reverse()
         for k in range(len(result_add_ma)): # 分類站上與跌破均線的日期集合
             if result_add_ma[k][3] > result_add_ma[k][4]:

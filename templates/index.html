@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>股票回測</title>
+    <title>Stocks Strategies Tracing Back System</title>
+    <link rel="shortcut ico" href="#"/>
     <style type="text/css">
     body {
         background-color: rgb(33, 33, 45);
@@ -26,22 +27,23 @@
             <option value="2">均線</option>
         </select>
         <div>
-            股號<input id="stock_number" style="margin-top: 10px;margin-left:10px">
+            股號<input id="stock_number" style="margin-top: 10px;margin-left:10px" placeholder="請輸入四位數上市股票之股號 ex:2330">
         </div>
         <div style="margin-top: 20px;">
             <span>時間</span>
-            起<input type="date" id="start_date" style="margin-left:10px">
+            起<input type="date" id="start_date" style="margin-left:10px" placeholder="開始時間必須早於結束時間">
             迄<input type="date" id="end_date" style="margin-left:10px">
         </div>
         <div style="margin-top: 20px;" id="input_price_for_region" >
             <span>價格</span>
-            低<input type="" id="lowest_price_for_region" style="margin-left:10px">
-            高<input type="" id="highest_price_for_region" style="margin-left:10px">
+            低<input type="" id="lowest_price_for_region" style="margin-left:10px" placeholder="區間低價必須小於區間高價">
+            高<input type="" id="highest_price_for_region" style="margin-left:10px" placeholder="區間高價必須小於區間低價">
         </div>
         <div style="margin-top: 20px;display: none;" id="input_for_ma">
             <span>均線</span>
-            <input id="how_many_ma">
+            <input id="how_many_ma" placeholder="請輸入不超過2400之正整數">
         </div>
+        <div id="warming" style="display:none;color:red"></div>
     </div>
 
     <script type="text/javascript">
@@ -97,35 +99,54 @@
             let draw_pic_data;
             let chart = document.getElementById("chart")
             let reward = document.getElementById("reward")
+            let warming = document.getElementById("warming");
             let req=new XMLHttpRequest;
             req.open("POST","/api/getstrategy");
             req.setRequestHeader("Content-type", "application/json")
             req.onload=function(){
+                // 把該消失的消掉
                 show_buy.innerHTML = "";
                 show_sale.innerHTML = "";
+                warming.style.display = "none";
+                chart.style.display = "none"; // 圖表
+                reward.style.display = "none"; // 報酬率
+
                 trade_dates_and_price = JSON.parse(this.responseText)["trade_dates_and_price"];
                 console.log(JSON.parse(this.responseText)["trade_dates_and_price"]);
                 draw_pic_data = JSON.parse(this.responseText)["draw_pic_data"];
                 document.getElementById("stock_name_and_number").innerHTML = JSON.parse(this.responseText)["stock_name_and_number"]; // 顯示股號、股票名稱
                 
-                for(let i = 0;i<trade_dates_and_price.length;i++){
-                    if(i%2 ==0){
-                        let append_text_buy = document.createElement("div");
-                        append_text_buy.innerHTML = trade_dates_and_price[i][1]+trade_dates_and_price[i][0]+trade_dates_and_price[i][2]
-                        show_buy.appendChild(append_text_buy)
-                    }
-                    else{
-                        let append_text_sale = document.createElement("div");
-                        append_text_sale.innerHTML = trade_dates_and_price[i][1]+trade_dates_and_price[i][0]+trade_dates_and_price[i][2]
-                        show_sale.appendChild(append_text_sale)
-                    }
+                if(trade_dates_and_price === "回測均線超過資料開始時間"){// 如果後端回傳回測均線超過資料開始時間
+                    warming.innerHTML = "回測均線超過資料開始時間";
+                    warming.style.display = "block";
+                    stock_name_and_number.style.display = "none";
+                    return
                 }
-                reward.innerHTML = "報酬率"+JSON.parse(this.responseText)["reward"]+"%"
-                // 刪掉之前的畫布
-                if(document.getElementsByTagName("canvas").length > 0){
-                    document.getElementsByTagName("canvas")[0].remove()
+                else{
+                    for(let i = 0;i<trade_dates_and_price.length;i++){
+                        if(i%2 ==0){
+                            let append_text_buy = document.createElement("div");
+                            append_text_buy.innerHTML = trade_dates_and_price[i][1]+trade_dates_and_price[i][0]+trade_dates_and_price[i][2]
+                            show_buy.appendChild(append_text_buy)
+                        }
+                        else{
+                            let append_text_sale = document.createElement("div");
+                            append_text_sale.innerHTML = trade_dates_and_price[i][1]+trade_dates_and_price[i][0]+trade_dates_and_price[i][2]
+                            show_sale.appendChild(append_text_sale)
+                        }
+                    }
+                    reward.innerHTML = "報酬率"+JSON.parse(this.responseText)["reward"]+"%"
+                    // 刪掉之前的畫布
+                    if(document.getElementsByTagName("canvas").length > 0){
+                        document.getElementsByTagName("canvas")[0].remove()
+                    }
+                    // 把該顯示的顯示回來
+                    chart.style.display = "block";
+                    reward.style.display = "block";
+
+
+                    drawpic();
                 }
-                drawpic();
     //             if(JSON.parse(this.responseText)["ok"]==true){
     //                 window.location="/booking"
     //             }else{
@@ -838,6 +859,7 @@
     </div>
     <div style="color:yellow;margin-top: 10px;" id="region_rules">
         區間規則：
+        <br>可回測最早時間為2004年3月。
         <br>如果回測第一天，開盤價小於區間低點，開盤價買進。
         <br>如果觸價的當天，開盤價高於區間高點，開盤價賣出；開盤價低於區間低點，開盤價買進。
         <br>如果區間高價與低價在當天同時碰觸，只會執行當時策略的第一個動作。
@@ -846,6 +868,8 @@
     </div>
     <div style="display:none;color:yellow;margin-top: 10px;" id="ma_rules">
         均線規則：
+        <br>資料開始時間為2004年3月，請注意回測均線與開始回測日期的關係；EX：十年線(2400天均線)開始回測時間不得早於2014年3月。
+        <br>最大回測均線：2400(十年線)
         <br>以收盤價高於與低於該日均線作為買進與賣出依據。
         <br>當日沒有成交量或當日暫停交易收盤價皆與昨日同。
         <br>均線使用無條件捨去小數第三位。
