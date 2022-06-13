@@ -25,7 +25,7 @@ connection_RDSdb=pool.get_connection()
 cursor=connection_RDSdb.cursor()
 cursor.execute("USE `stock`")
 
-with open("\home\ubuntu\stock-strategies\歷史股號.txt","r",encoding="utf-8") as file:
+with open("\home\ubuntu\stock-strategies\all_stocks_numbers.txt","r",encoding="utf-8") as file:
     stock_number_list = eval(file.read()) # 把每個檔案中的個股挑出來
     length_older_stocks_list=len(stock_number_list)
     file.close()
@@ -34,7 +34,7 @@ with open("\home\ubuntu\stock-strategies\no_trade.txt","r",encoding="utf-8") as 
     no_trade = list(eval(file.read())) # 成交股數為0的股號與日期
     file.close()
 
-with open("\home\ubuntu\stock-strategies\新增股號.txt","r",encoding="utf-8") as file:
+with open("\home\ubuntu\stock-strategies\new_stocks_numbers.txt","r",encoding="utf-8") as file:
     new_stock_number_list = list(eval(file.read())) # 歷史的新增股號
     file.close()
 
@@ -110,7 +110,7 @@ for m in new_no_trade:
 stock_number_list.sort()
 # print("舊的歷史股號長度", length_older_stocks_list)
 # print("新的歷史股號長度", len(stock_number_list))
-with open("\home\ubuntu\stock-strategies\新增股號.txt","w",encoding="utf-8") as file:
+with open("\home\ubuntu\stock-strategies\new_stocks_numbers.txt","w",encoding="utf-8") as file:
     file.write(str(new_stock_number_list))
     file.close()
 
@@ -118,7 +118,7 @@ with open("\home\ubuntu\stock-strategies\no_trade.txt","w",encoding="utf-8") as 
     file.write(str(no_trade))
     file.close()
 
-with open("\home\ubuntu\stock-strategies\歷史股號.txt","w",encoding="utf-8") as file:
+with open("\home\ubuntu\stock-strategies\all_stocks_numbers.txt","w",encoding="utf-8") as file:
     file.write(str(stock_number_list))   
     file.close()     
 
