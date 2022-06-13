@@ -45,6 +45,8 @@ new_no_trade = []
 # 抓API
 import urllib.request as req
 import json
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 url = "https://www.twse.com.tw/exchangeReport/MI_INDEX?response=json&date="+today_str+"&type=ALL&_=1650028051196l"
 request = req.Request(url)
 with req.urlopen(request) as response:
