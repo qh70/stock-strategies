@@ -1,7 +1,10 @@
 # Stocks-Strategies
   We provide you two strategies to see how they work in the past.
+  <br>
   1.Boundary
+  <br>
   2.Moving average
+
 ## Website
 https://strategy-zone.com
 ## Main Features
@@ -10,11 +13,11 @@ https://strategy-zone.com
 
 Type in the information you would like to trace back
   <p>
-    <img src="https://github.com/qh70/stock-strategies/blob/main/static/type%20in%20red.png" width="200px" height="200px">
+    <img src="https://github.com/qh70/stock-strategies/blob/main/static/type%20in%20red.png" width="400px" height="200px" object-fit="cover">
   </p>
 You would get how it works back
   <p>
-    <img src="https://github.com/qh70/stock-strategies/blob/main/static/result%20for%20boundary.png" width="700px" height="350px">
+    <img src="https://github.com/qh70/stock-strategies/blob/main/static/result%20for%20boundary.png" width="700px" height="350px" object-fit="cover">
   </p>
 <br>
 
