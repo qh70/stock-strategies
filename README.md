@@ -1,9 +1,9 @@
 <h1>Stocks-Strategies</h1>
-See How Your Strategies Work in The Past
+  See How Your Strategies Work in The Past
 <h2>Website</h2>
 https://strategy-zone.com
 <h2>Main Features</h2>
-<li>Boundary strategy</li>
+  <li>Boundary strategy</li>
 Type in the information you would like to trace back
 <img src="https://github.com/qh70/stock-strategies/blob/main/static/type%20in%20red.png">
 You would get how it works back
@@ -37,4 +37,4 @@ You would get how it works back
 <h2>Contact</h2>
 Jerry Huang
 <br>
-Email：<a href="#">qh7047789@gmail.com</a>
+Email：<a href="qh7047789@gmail.com">qh7047789@gmail.com</a>
