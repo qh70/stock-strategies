@@ -74,12 +74,8 @@ def api_getstrategy():
                 "high": result[i][2]/100,
                 "low": result[i][3]/100,  
                 "close": result[i][4]/100, 
-                # "volume": result[i][3], 
                 "price_change": result[i][5]/100,
                 "date": date,
-                # "ma5": result[i][12],
-                # "ma10": result[i][13],
-                # "ma20": result[i][14]
             } 
             stock_daily_0_to_full.append(stock_daily.copy())
         #================================================================
@@ -93,14 +89,13 @@ def api_getstrategy():
             for i in range(len(result)):
                 if result[i][2] >= float(highest_price_for_region)*100:
                     highest_price_touched.append([result[i][0],result[i][1]/100]) # 當日最高價高於區間高價的list
-                if result[i][2] <= float(lowest_price_for_region)*100: 
+                if result[i][3] <= float(lowest_price_for_region)*100: 
                     lowest_price_touched.append([result[i][0],result[i][1]/100]) # 當日最低價低於區間低價的list
             find_status = "up" # 往區間高價找
             for j in range(len(result)):
                 if find_status == "down":
                     for k in range(len(lowest_price_touched)):
                         if lowest_price_touched[k][0] > trade_dates[-1][1]:
-                            # lowest_price_touched[k][1] 開盤價
                             if lowest_price_touched[k][1] >= float(lowest_price_for_region):
                                 trade_dates.append(["買進", lowest_price_touched[k][0], lowest_price_for_region])
                                 del lowest_price_touched[:lowest_price_touched.index(lowest_price_touched[k])+1]
@@ -131,8 +126,10 @@ def api_getstrategy():
             for i in range(len(result)):
                 if result[i][2] >= float(highest_price_for_region)*100:
                     highest_price_touched.append([result[i][0],result[i][1]/100]) # 最高價高於區間高價的list
-                if result[i][2] <= float(lowest_price_for_region)*100: 
+                if result[i][3] <= float(lowest_price_for_region)*100: 
                     lowest_price_touched.append([result[i][0],result[i][1]/100]) # 最低價低於區間低價的list
+            print(highest_price_touched)
+            print(lowest_price_touched)
             if len(lowest_price_touched) >= 1:
                 trade_dates.append(["買進", lowest_price_touched[0][0], lowest_price_for_region])
                 find_status = "up" # 往區間高價找
@@ -140,7 +137,10 @@ def api_getstrategy():
                     if find_status == "down":
                         for k in range(len(lowest_price_touched)):
                             if lowest_price_touched[k][0] > trade_dates[-1][1]:
-                                if lowest_price_touched[k][1] >= float(lowest_price_for_region)*100: # 如果開盤價大於區間低價
+                                if lowest_price_touched[k][1] >= float(lowest_price_for_region): # 如果開盤價大於區間低價
+                                    # print(lowest_price_touched[k][0])
+                                    # print(lowest_price_touched[k][1])
+                                    # print(float(lowest_price_for_region)*100)
                                     trade_dates.append(["買進", lowest_price_touched[k][0], lowest_price_for_region]) # 區間低價買進(盤中)
                                     # del lowest_price_touched[:lowest_price_touched.index(lowest_price_touched[k])]
                                     del lowest_price_touched[:lowest_price_touched.index(lowest_price_touched[k])+1]
@@ -168,7 +168,6 @@ def api_getstrategy():
                 trade_dates = [["沒有買入點", "", ""],["", "", ""]]
             if len(trade_dates)%2 == 1:
                 trade_dates.append(["回測最後一天賣出", result[-1][0], result[-1][4]/100])
-            
     # 均線策略
     elif request.json["how_many_ma"] != "":
         how_many_ma = int(request.json["how_many_ma"]) # 均線
@@ -301,12 +300,9 @@ def api_getstrategy():
                 "high": result_add_ma[i][5], 
                 "close": result_add_ma[i][3], 
                 "low": result_add_ma[i][0], 
-                # "volume": result[i][3], 
                 "price_change": result_add_ma[i][6],
                 "date": date,
                 "ma5": result_add_ma[i][4],
-                # "ma10": result[i][13],
-                # "ma20": result[i][14]
             } 
             stock_daily_0_to_full.append(stock_daily.copy())
         #================================================================
