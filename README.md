@@ -15,11 +15,11 @@ Type in the information you would like to trace back
   <p>
     <img src="https://github.com/qh70/stock-strategies/blob/main/static/type%20in%20red.png" width="500px" height="200px" object-fit="cover">
   </p>
-You would get <p style="color:blue">the candlestick chart</p> and <p style="color:yellow">how it works</p> back
+You would get <font color=#0000FF>the candlestick chart</font> and <font color=#FFD700>how it works</font> back
   <p>
     <img src="https://github.com/qh70/stock-strategies/blob/main/static/result%20for%20boundary.png" width="700px" height="350px" object-fit="cover">
   </p>
-  
+
 ## Architecture
 <p>
 <img src="https://github.com/qh70/stock-strategies/blob/main/static/%E6%9E%B6%E6%A7%8B%E5%9C%96.png">
