@@ -1,15 +1,12 @@
 # Stocks-Strategies
   We provide you two strategies to see how they work in the past.
-  <br>
-  1.Boundary
-  <br>
-  2.Moving average
+ 
 
 ## Website
 https://strategy-zone.com
 ## Main Features
-* Boundary strategy & Moving average strategy
-<br>
+  * 1.Regional
+  * 2.Moving Average
 
 Type in the information you would like to trace back
   <p>
