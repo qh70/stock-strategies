@@ -8,19 +8,18 @@
 ## Website
 https://strategy-zone.com
 ## Main Features
-* Boundary strategy
+* Boundary strategy & Moving average strategy
 <br>
 
 Type in the information you would like to trace back
   <p>
-    <img src="https://github.com/qh70/stock-strategies/blob/main/static/type%20in%20red.png" width="400px" height="200px" object-fit="cover">
+    <img src="https://github.com/qh70/stock-strategies/blob/main/static/type%20in%20red.png" width="500px" height="200px" object-fit="cover">
   </p>
-You would get how it works back
+You would get <p style="color:blue">the candlestick chart</p> and <p style="color:yellow">how it works</p> back
   <p>
     <img src="https://github.com/qh70/stock-strategies/blob/main/static/result%20for%20boundary.png" width="700px" height="350px" object-fit="cover">
   </p>
-<br>
-
+  
 ## Architecture
 <p>
 <img src="https://github.com/qh70/stock-strategies/blob/main/static/%E6%9E%B6%E6%A7%8B%E5%9C%96.png">
