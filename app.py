@@ -128,8 +128,6 @@ def api_getstrategy():
                     highest_price_touched.append([result[i][0],result[i][1]/100]) # 最高價高於區間高價的list
                 if result[i][3] <= float(lowest_price_for_region)*100: 
                     lowest_price_touched.append([result[i][0],result[i][1]/100]) # 最低價低於區間低價的list
-            print(highest_price_touched)
-            print(lowest_price_touched)
             if len(lowest_price_touched) >= 1:
                 trade_dates.append(["買進", lowest_price_touched[0][0], lowest_price_for_region])
                 find_status = "up" # 往區間高價找
@@ -138,9 +136,6 @@ def api_getstrategy():
                         for k in range(len(lowest_price_touched)):
                             if lowest_price_touched[k][0] > trade_dates[-1][1]:
                                 if lowest_price_touched[k][1] >= float(lowest_price_for_region): # 如果開盤價大於區間低價
-                                    # print(lowest_price_touched[k][0])
-                                    # print(lowest_price_touched[k][1])
-                                    # print(float(lowest_price_for_region)*100)
                                     trade_dates.append(["買進", lowest_price_touched[k][0], lowest_price_for_region]) # 區間低價買進(盤中)
                                     # del lowest_price_touched[:lowest_price_touched.index(lowest_price_touched[k])]
                                     del lowest_price_touched[:lowest_price_touched.index(lowest_price_touched[k])+1]
@@ -313,7 +308,7 @@ def api_getstrategy():
         for m in range(int(len(trade_dates)/2)):
             reward = reward+(trade_dates[m*2-1][2]-trade_dates[m*2-2][2])/trade_dates[m*2-2][2]*100
     return jsonify({"trade_dates_and_price": trade_dates,"draw_pic_data": stock_daily_0_to_full, "reward": math.floor(reward*100) / 100.0, "stock_name_and_number": stock_number})
-
+'''
 # socket================================================================
 from flask import Flask, render_template
 from flask_socketio import SocketIO, send, emit
@@ -381,9 +376,6 @@ def room_message(data):
 
 #如果沒有join_room client端將接收不到來自room emit出來的訊息
 # ====================================================    
-
+'''
 
 app.run(host="0.0.0.0",port=3000)
-
-# if __name__ == '__main__':
-#     socketio.run(app, host="0.0.0.0", port=3000)
