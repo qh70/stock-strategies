@@ -328,7 +328,7 @@
                     ctx.stroke();
                     ctx.closePath();
                 }
-
+                // 畫黃色從上到下直線
                 function drawLineWithColor(x, y, X, Y, color) {
                     ctx.beginPath();
                     ctx.moveTo(x, y);
@@ -683,13 +683,15 @@
                             drawBarAnimate(true);
                             drawDragBar();
                             drawLineWithColor(parseInt(xx + bWidth / 2 - 1), 40, parseInt(xx + bWidth / 2 - 1), 800);
-                            drawDashLine(ctx, 120, canvas.getBoundingClientRect().top + event.pageY * 2 - 90, 760 * 3, canvas.getBoundingClientRect().top + event.pageY * 2 - 90, 5);
+                            // 畫橫的虛線
+                            drawDashLine(ctx, 120, canvas.getBoundingClientRect().top + event.pageY * 2 - 400, 760 * 3, canvas.getBoundingClientRect().top + event.pageY * 2 - 400, 5);
 
 
                             var vx=10;
-                            var vy=canvas.getBoundingClientRect().top + event.pageY * 2 - 90-20;
+                            var vy=canvas.getBoundingClientRect().top + event.pageY * 2 - 400 - 20;
                             ctx.beginPath();
                             ctx.moveTo(vx, vy);
+                            // 畫面左邊價錢的方框
                             ctx.lineTo(vx+100, vy);
                             ctx.lineTo(vx+100, vy+40);
                             ctx.lineTo(vx, vy+40);
@@ -707,7 +709,7 @@
 
 
                             vx=parseInt(xx + bWidth / 2 - 1)+20;
-                            vy=canvas.getBoundingClientRect().top + event.pageY * 2 - 90+20;
+                            vy=canvas.getBoundingClientRect().top + event.pageY * 2 - 400 + 20;
                             ctx.beginPath();
                             ctx.moveTo(vx, vy);
                             ctx.lineTo(vx+200, vy);
@@ -804,7 +806,7 @@
                 function getBeveling(x, y) {
                     return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
                 }
-
+                // 畫橫的虛線
                 function drawDashLine(context, x1, y1, x2, y2, dashLen) {
                     dashLen = dashLen === undefined ? 5 : dashLen;
                     //得到斜邊的總長度  
