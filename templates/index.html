@@ -249,7 +249,6 @@
                     M20[0] = parseFloat(FT[i].ma20).toFixed(2);
                     MA20.push(M20);
                 }
-                console.log(MA5)
                 //上面是直接使用返回的均線數據,但是30日均線沒有給,下面通過計算獲取30日均線數據
                 //計算30日均線
                 var MA30 = calculateMA(30, dataArr);
@@ -683,7 +682,7 @@
                             drawBarAnimate(true);
                             drawDragBar();
                             drawLineWithColor(parseInt(xx + bWidth / 2 - 1), 40, parseInt(xx + bWidth / 2 - 1), 800);
-                            // 畫橫的虛線
+                            // 畫橫的黃色虛線
                             drawDashLine(ctx, 120, canvas.getBoundingClientRect().top + event.pageY * 2 - 400, 760 * 3, canvas.getBoundingClientRect().top + event.pageY * 2 - 400, 5);
 
 
